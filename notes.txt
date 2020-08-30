@@ -1,0 +1,4 @@
+gem install github-pages
+change gemfile to: gem "github-pages", group: :jekyll_plugins
+gem update github-pages
+bundle exec jekyll serve
