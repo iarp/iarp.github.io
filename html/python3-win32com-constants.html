@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python 3 accessing win32com.client.constants &#8212; IARP 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Dealing with larger SQL datasets and limited memory" href="sql-dataset-memory.html" />
+    <link rel="prev" title="Python 3 accessing Outlook via API/COM" href="python3-outlook-api.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sql-dataset-memory.html" title="Dealing with larger SQL datasets and limited memory"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="python3-outlook-api.html" title="Python 3 accessing Outlook via API/COM"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">IARP 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Python 3 accessing win32com.client.constants</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="python-3-accessing-win32com-client-constants">
+<h1>Python 3 accessing win32com.client.constants<a class="headerlink" href="#python-3-accessing-win32com-client-constants" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Originally Written: 2016-03-01</p>
+</div></blockquote>
+<p>After installing the relevent <a class="reference external" href="https://sourceforge.net/projects/pywin32/">installation of pywin32</a>
+you will be able to start accessing win32com items.</p>
+<p>I will show you an example for accessing Outlook from Python.</p>
+<p>According to Microsofts <a class="reference external" href="https://msdn.microsoft.com/en-us/library/office/ff866724.aspx">documentation here</a> after
+you’ve set a variable with the NameSpace object, if you want to get the default folder in outlook for certain things
+like Inbox, Trash, Sent, Deleted…etc. What you do is call <strong>.GetDefaultFolder(olFolderInbox)</strong> and
+that will return the default Inbox folder in the Outlook you are connecting to.</p>
+<p>Python doesn’t know what olFolderInbox is by default, it’s just another variable that is undefined yet. win32com
+gives you access to these constants by going to win32com.client.constants.WhatEverYouNeed. By default though win32com
+does not make these constants, you need to run another application.</p>
+<ul class="simple">
+<li><p>Search your Start Menu in Windows for Pythonwin OR <strong>look for C:\Python34\Lib\site-packages\pythonwin\Pythonwin.exe</strong> replacing Python34 for which ever version you are using.</p></li>
+<li><p>Go to <strong>Tools</strong></p></li>
+<li><p>Select <strong>COM Makepy Utility</strong></p></li>
+<li><p>Depending on which application you wish to access, in my case I wanted Outlook, Excel, and Word, you need to look for <strong>Microsoft Outlook XX.X Object Library (X.X)</strong> Word and Excel look similar. You can either repeat steps 2, 3, and 4 for each one individually or just use CTRL and select all 3 at once.</p></li>
+<li><p>Select OK</p></li>
+<li><p>In the Interactive Window you will see the following line</p>
+<ul>
+<li><p>Building definitions from type library…</p></li>
+<li><p>Generation…</p></li>
+<li><p>Importing module</p></li>
+</ul>
+</li>
+<li><p>Once you see Import module hit enter and then close PythonWin application.</p></li>
+</ul>
+<p>You will now be able to access win32com.client.constants.olFolderInbox</p>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="python3-outlook-api.html"
+                        title="previous chapter">Python 3 accessing Outlook via API/COM</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sql-dataset-memory.html"
+                        title="next chapter">Dealing with larger SQL datasets and limited memory</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/python3-win32com-constants.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sql-dataset-memory.html" title="Dealing with larger SQL datasets and limited memory"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="python3-outlook-api.html" title="Python 3 accessing Outlook via API/COM"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">IARP 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Python 3 accessing win32com.client.constants</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, IARP.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>

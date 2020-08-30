@@ -28,9 +28,9 @@ browsers internet connection through the web server.
 * Leave the next row of **radio selectors on Auto**
 * **Click Add**
 
-# Browser Setup
+## Browser Setup
 
-## Google Chrome
+### Google Chrome
 
 * Ensure the Proxy Switchysharp extension or equivilent is installed
 * Within Google Chrome **right click on the Proxy Switchysharp** icon in the top right corner and select **Options**
@@ -44,7 +44,7 @@ browsers internet connection through the web server.
 
 Back in Google Chrome, left click on the Proxy Switchysharp icon in the top right and select 127.0.0.1:8081.
 
-## Mozilla Firefox
+### Mozilla Firefox
 
 * Ensure the Proxy Selector add-on or equivilent is installed
 * Within Firefox click on the addon icon in the top right and select **Manage Proxies**
@@ -57,7 +57,7 @@ Back in Google Chrome, left click on the Proxy Switchysharp icon in the top righ
 Back in Firefox, click on the Proxy addon icon and select 127.0.0.1:8081.
 
 
-# Confirming Browser Setup
+## Confirming Browser Setup
 
 Once you have done that head over to [http://whatismyip.org/](http://whatismyip.org/) and ensure that the IP address it returns is 
 the same as your web servers IP address.
@@ -68,7 +68,7 @@ the same as your web servers IP address.
 
 If your IP address does match your web servers IP address, congratulations the proxy portion is complete.
 
-# Now What?
+## Now What?
 
 Well from here we need to edit your web server software to only allow connections from your web servers IP address. 
 That way, the only way to access the portion of your website under the proxy protection is via connecting to your web 
@@ -76,7 +76,7 @@ server directly and accessing it through the proxy.
 
 In the examples below I will go off the basis that 54.56.47.5 is my web servers IP address.
 
-## Apache 
+### Apache 
 
 Apache is fairly straight forward, even a slight .htaccess modification would do.
 
@@ -107,7 +107,7 @@ configuration.
 If you still have access to the page with the proxy turned off, something isn't right with your apache configuration. 
 Have a look at the code above and look further into what changes you have made.
 
-# WordPress protection
+## WordPress protection
 
 This is the code required for Apache to protect a WordPress installation
 

@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ESXi 5 and the Intel 82579 &#8212; IARP 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Hyper-V and the Intel 82579" href="hyper-v-intel-82579.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="hyper-v-intel-82579.html" title="Hyper-V and the Intel 82579"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">IARP 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ESXi 5 and the Intel 82579</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="esxi-5-and-the-intel-82579">
+<h1>ESXi 5 and the Intel 82579<a class="headerlink" href="#esxi-5-and-the-intel-82579" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Originally Written: 2012-02-26</p>
+</div></blockquote>
+<div class="section" id="specs">
+<h2>Specs:<a class="headerlink" href="#specs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Intel i7-2600k</p></li>
+<li><p>ASUS P8Z68-V Pro GEN3 (Bundled with CPU)</p></li>
+<li><p>Corsair Dominator DDR3-1600 32GB (4x8GB)</p></li>
+<li><p>2 x Western Digital Velociraptor 300GB 10K hard drives</p></li>
+<li><p>Seasonic X760 Gold Power Supply</p></li>
+<li><p>Cooler Master CM690 II Advanced case</p></li>
+<li><p>Intel Pro/1000GT Ethernet Card</p></li>
+<li><p>APC BX1500G UPS</p></li>
+</ul>
+</div>
+<div class="section" id="problems-right-off-the-bat">
+<h2>Problems right off the bat:<a class="headerlink" href="#problems-right-off-the-bat" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Intel 82579 onboard ethernet nic is too new for the standard ESXi 5.0 installation ISO. It will not install without an HCL listed ethernet card, there is however a work around to insert the drivers needed into the ESXi installer so that it will work. You will find the files listed below.</p></li>
+<li><p>the i7-2600k does not support VT-D. The motherboard does support VT so you can run 64-bit images but you cannot use hardware passthrough as it isnot supposed at all. It’s my understanding that the i7-2600 does support VT-D (note, no k after the 2600, there is a difference)</p></li>
+</ul>
+<p>Aside from that, I personally do not need the hardware passthrough, but I obvisouly had issues with the ethernet connection. To solve that problem I found a blog post elsewhere that gave the drivers and the converter program. Basically, all you need to do is download the ISO from VMware, download the ethernet driver and the customizer program then use the custom program to insert the drivers into the ISO, reburn that ISO to a new CD and then install from there.</p></div>
+<div class="section" id="useful-code-to-remember">
+<h2>Useful Code to remember<a class="headerlink" href="#useful-code-to-remember" title="Permalink to this headline">¶</a></h2>
+<p>Since ESXi requires preallocated disks and won’t work with Dynamic sized disks, they must be converted. This is easily done through an SSH connection to the server, CD’ing into the folder with the disk and running this command:</p></p>
+<p><code class="docutils literal notranslate"><span class="pre">vmkfstools</span> <span class="pre">-i</span> <span class="pre">original-name.vmdk</span> <span class="pre">new-name.vmdk</span></code></p>
+</div>
+<div class="section" id="downloads">
+<h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://mega.nz/#F%21L4Ri1BSR%21cDDnTqZWnoMHi_X7mYQXOg">e1001e - Ethernet Drivers</a></p></li>
+<li><p><a class="reference external" href="https://mega.nz/#F%21L4Ri1BSR%21cDDnTqZWnoMHi_X7mYQXOg">ESXi Customizer v2.7</a></p></li>
+<li><p><a class="reference external" href="https://mega.nz/#F%21L4Ri1BSR%21cDDnTqZWnoMHi_X7mYQXOg">ESXi 5.0 with ASUS P8Z68-V PRO GEN3 Ethernet Drivers</a></p></li>
+</ul>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ESXi 5 and the Intel 82579</a><ul>
+<li><a class="reference internal" href="#specs">Specs:</a></li>
+<li><a class="reference internal" href="#problems-right-off-the-bat">Problems right off the bat:</a></li>
+<li><a class="reference internal" href="#useful-code-to-remember">Useful Code to remember</a></li>
+<li><a class="reference internal" href="#downloads">Downloads</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hyper-v-intel-82579.html"
+                        title="previous chapter">Hyper-V and the Intel 82579</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/esxi-5-and-intel-82579.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="hyper-v-intel-82579.html" title="Hyper-V and the Intel 82579"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">IARP 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ESXi 5 and the Intel 82579</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, IARP.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>

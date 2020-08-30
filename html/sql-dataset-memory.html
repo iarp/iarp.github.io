@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dealing with larger SQL datasets and limited memory &#8212; IARP 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Protect websites with the power of SSH" href="ssh-website-tunneling.html" />
+    <link rel="prev" title="Python 3 accessing win32com.client.constants" href="python3-win32com-constants.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ssh-website-tunneling.html" title="Protect websites with the power of SSH"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="python3-win32com-constants.html" title="Python 3 accessing win32com.client.constants"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">IARP 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Dealing with larger SQL datasets and limited memory</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="dealing-with-larger-sql-datasets-and-limited-memory">
+<h1>Dealing with larger SQL datasets and limited memory<a class="headerlink" href="#dealing-with-larger-sql-datasets-and-limited-memory" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Originally Written: 2015-08-20</p>
+</div></blockquote>
+<p>There may come a time when you have a very large table to query that results in a very large result set. If you use
+pyodbc for connecting to SQL Server or mysql.connector, when you issue the query it loads all of the results into
+memory. This is great for speed, not so when your query may return 15GB worth of email data.</p>
+<p>The code provided below is what I use for progressively querying out results without trying to pull all rows in a
+single shot. The method used for SQL Server is not overly effecient but it gets the job done. MySQL thankfully
+already provides the tools necessary to do exactly what we want.</p>
+<div class="section" id="mysql">
+<h2>MySQL<a class="headerlink" href="#mysql" title="Permalink to this headline">¶</a></h2>
+<p>In this example I am using a mysql.connector cursor to query data from a table, I make use of MySQL’s ability to
+limit and offset query results to only query out a chunk of data at a time.</p>
+<p>You may change the SELECT statement as you see fit, but for this to work you need to leave the <code class="docutils literal notranslate"><span class="pre">LIMIT</span> <span class="pre">{},{}</span></code> at
+the very end of the query.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">#</span> <span class="k">Offset</span> <span class="k">and</span> <span class="k">limit</span> <span class="n">control</span> <span class="n">how</span> <span class="n">many</span> <span class="n">records</span> <span class="k">to</span> <span class="n">query</span> <span class="k">for</span> <span class="k">at</span> <span class="n">a</span> <span class="n">single</span> <span class="k">time</span><span class="p">.</span>
+<span class="k">offset</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">limit</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">total_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">table_name</span> <span class="o">=</span> <span class="s1">&#39;EMAIL_BODIES&#39;</span>
+
+<span class="o">#</span> <span class="n">Continuously</span> <span class="n">query</span> <span class="k">until</span> <span class="n">we</span> <span class="n">break</span> <span class="n">the</span> <span class="n">looping</span><span class="p">.</span>
+<span class="n">while</span> <span class="k">True</span><span class="p">:</span>
+
+    <span class="o">#</span> <span class="n">This</span> <span class="k">is</span> <span class="n">a</span> <span class="n">standard</span> <span class="n">query</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">easily</span> <span class="k">add</span> <span class="n">a</span> <span class="k">WHERE</span> <span class="n">clause</span> <span class="n">just</span> <span class="k">before</span> <span class="k">LIMIT</span><span class="p">.</span>
+    <span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">&quot;SELECT * FROM {} LIMIT {},{}&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="k">table_name</span><span class="p">,</span> <span class="k">offset</span><span class="p">,</span> <span class="k">limit</span><span class="p">))</span>
+
+    <span class="o">#</span> <span class="k">If</span> <span class="k">no</span> <span class="k">rows</span> <span class="n">were</span> <span class="n">returned</span><span class="p">,</span> <span class="n">stop</span> <span class="n">the</span> <span class="n">while</span> <span class="n">loop</span>
+    <span class="k">if</span> <span class="k">not</span> <span class="k">cursor</span><span class="p">.</span><span class="n">rowcount</span><span class="p">:</span>
+        <span class="n">break</span>
+
+    <span class="o">#</span> <span class="k">In</span> <span class="n">this</span> <span class="n">example</span><span class="p">,</span> <span class="n">I</span> <span class="n">am</span> <span class="n">writing</span> <span class="n">the</span> <span class="n">entire</span> <span class="k">rows</span> <span class="k">data</span> <span class="k">into</span> <span class="n">a</span> <span class="n">CSV</span> <span class="n">file</span><span class="p">.</span>
+    <span class="k">for</span> <span class="k">row</span> <span class="k">in</span> <span class="k">cursor</span><span class="p">.</span><span class="n">fetchall</span><span class="p">():</span>
+        <span class="n">csv_file</span><span class="p">.</span><span class="n">writerow</span><span class="p">(</span><span class="k">row</span><span class="p">)</span>
+
+    <span class="o">#</span> <span class="k">Nothing</span> <span class="k">more</span> <span class="k">than</span> <span class="n">a</span> <span class="n">counter</span>
+    <span class="n">total_counter</span> <span class="o">+=</span> <span class="k">cursor</span><span class="p">.</span><span class="n">rowcount</span>
+
+    <span class="o">#</span> <span class="n">Leave</span> <span class="n">this</span> <span class="n">alone</span><span class="p">,</span> <span class="n">it</span> <span class="k">is</span> <span class="n">what</span> <span class="n">increments</span> <span class="n">the</span> <span class="k">offset</span> <span class="k">for</span> <span class="n">the</span> <span class="k">next</span> <span class="n">iteration</span>
+    <span class="k">offset</span> <span class="o">+=</span> <span class="k">limit</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sql-server">
+<h2>SQL Server<a class="headerlink" href="#sql-server" title="Permalink to this headline">¶</a></h2>
+<p>This one is a very different animal compared to MySQL. Unfortunately SQL Server does not provide any native way to
+offset result sets, so what we have to do is make use of CTE’s and forcefully only grab a specific number of rows
+between two row numbers.</p>
+<p>This method requires something extra, it requires you to have a unique column in the table. The way it works is it
+pulls your original query (on the server’s side) and then orders by the column that contains unique data. If you
+don’t have a uniquely identifiable column this method will not output values correctly. Typically when you build a
+database you’ll add a column with something like IDENTIFY(1,1) which is the same thing as MySQL’s AUTO_INCREMENT,
+you would want to use that column.</p>
+<p>If you need to modify the SELECT statement that is pulling the data you want to export, you will need to
+modify: <code class="docutils literal notranslate"><span class="pre">WITH</span> <span class="pre">Results_CTE</span> <span class="pre">AS</span> <span class="pre">(SELECT</span> <span class="pre">*,</span> <span class="pre">ROW_NUMBER()</span> <span class="pre">OVER</span> <span class="pre">(ORDER</span> <span class="pre">BY</span> <span class="pre">{3})</span> <span class="pre">AS</span> <span class="pre">RowNum</span> <span class="pre">FROM</span> <span class="pre">{0})</span></code> you may change the
+asterisk to any column names you wish and you can add a WHERE statement after the <code class="docutils literal notranslate"><span class="pre">FROM</span> <span class="pre">{0}</span></code> part, but do not
+modify the rest.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">#</span> <span class="k">Offset</span> <span class="k">and</span> <span class="k">limit</span> <span class="n">control</span> <span class="n">how</span> <span class="n">many</span> <span class="n">records</span> <span class="k">to</span> <span class="n">query</span> <span class="k">for</span> <span class="k">at</span> <span class="n">a</span> <span class="n">single</span> <span class="k">time</span><span class="p">.</span>
+<span class="k">offset</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">limit</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">total_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">table_name</span> <span class="o">=</span> <span class="s1">&#39;EMAIL_BODIES&#39;</span>
+<span class="n">unique_table_column</span> <span class="o">=</span> <span class="s1">&#39;email_id&#39;</span>
+
+<span class="o">#</span> <span class="n">Query</span> <span class="mi">1</span> <span class="k">row</span> <span class="k">for</span> <span class="k">column</span> <span class="n">titles</span><span class="p">.</span> <span class="n">This</span> <span class="n">this</span> <span class="n">alone</span><span class="p">.</span>
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">&quot;SELECT TOP 1 * FROM {}&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="k">table_name</span><span class="p">))</span>
+
+<span class="o">#</span> <span class="n">Obtaining</span> <span class="n">the</span> <span class="k">column</span> <span class="n">titles</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="k">row</span><span class="p">.</span><span class="k">column_name</span> <span class="k">for</span> <span class="k">row</span> <span class="k">in</span> <span class="k">cursor</span><span class="p">.</span><span class="n">columns</span><span class="p">(</span><span class="k">table</span><span class="o">=</span><span class="k">table_name</span><span class="p">)]</span>
+
+<span class="o">#</span> <span class="n">Continuously</span> <span class="n">query</span> <span class="k">until</span> <span class="n">we</span> <span class="n">break</span> <span class="n">the</span> <span class="n">looping</span><span class="p">.</span>
+<span class="n">while</span> <span class="k">True</span><span class="p">:</span>
+
+    <span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">&quot;&quot;&quot;</span>
+<span class="ss">    WITH Results_CTE AS (SELECT *, ROW_NUMBER() OVER (ORDER BY {3}) AS RowNum FROM {0})</span>
+<span class="ss">    SELECT * FROM Results_CTE WHERE RowNum &amp;gt;= {1} AND RowNum &amp;lt; {1} + {2}</span>
+<span class="ss">    &quot;&quot;&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="k">table_name</span><span class="p">,</span> <span class="k">offset</span><span class="p">,</span> <span class="k">limit</span><span class="p">,</span> <span class="n">unique_table_column</span><span class="p">))</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="k">row</span> <span class="k">in</span> <span class="k">cursor</span><span class="p">.</span><span class="n">fetchall</span><span class="p">():</span>
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">row_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">getattr</span><span class="p">(</span><span class="k">row</span><span class="p">,</span> <span class="k">column</span><span class="p">)</span> <span class="k">for</span> <span class="k">column</span> <span class="k">in</span> <span class="n">columns</span><span class="p">]</span>
+
+        <span class="o">#</span> <span class="k">In</span> <span class="n">this</span> <span class="n">example</span> <span class="n">we</span> <span class="k">are</span> <span class="n">writing</span> <span class="n">the</span> <span class="k">rows</span> <span class="k">data</span> <span class="k">to</span> <span class="n">a</span> <span class="n">csv</span> <span class="n">file</span><span class="p">.</span>
+        <span class="n">csv_file</span><span class="p">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row_data</span><span class="p">)</span>
+
+    <span class="o">#</span> <span class="k">If</span> <span class="n">the</span> <span class="n">counter</span> <span class="k">is</span> <span class="n">still</span> <span class="mi">0</span> <span class="n">it</span> <span class="n">means</span> <span class="n">our</span> <span class="n">query</span> <span class="n">returned</span> <span class="k">no</span> <span class="n">results</span><span class="p">.</span>
+    <span class="k">if</span> <span class="k">not</span> <span class="n">counter</span><span class="p">:</span>
+        <span class="n">break</span>
+
+    <span class="n">total_counter</span> <span class="o">+=</span> <span class="n">counter</span>
+
+    <span class="k">offset</span> <span class="o">+=</span> <span class="k">limit</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sql-server-updated-2016-09-10">
+<h2>SQL Server Updated 2016-09-10<a class="headerlink" href="#sql-server-updated-2016-09-10" title="Permalink to this headline">¶</a></h2>
+<p>This newer method does not require a CTE or limiting as it leaves the data on the SQL Server and obtains the
+rows individually. So far in my testing this has been faster than the CTE.</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">table_name</span> <span class="o">=</span> <span class="s1">&#39;EMAIL_BODIES&#39;</span>
+
+<span class="o">#</span> <span class="n">Query</span> <span class="mi">1</span> <span class="k">row</span> <span class="k">for</span> <span class="k">column</span> <span class="n">titles</span><span class="p">.</span> <span class="n">This</span> <span class="n">this</span> <span class="n">alone</span><span class="p">.</span>
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">&quot;SELECT TOP 1 * FROM {}&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="k">table_name</span><span class="p">))</span>
+
+<span class="o">#</span> <span class="n">Obtaining</span> <span class="n">the</span> <span class="k">column</span> <span class="n">titles</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="k">row</span><span class="p">.</span><span class="k">column_name</span> <span class="k">for</span> <span class="k">row</span> <span class="k">in</span> <span class="k">cursor</span><span class="p">.</span><span class="n">columns</span><span class="p">(</span><span class="k">table</span><span class="o">=</span><span class="k">table_name</span><span class="p">)]</span>
+
+<span class="k">cursor</span><span class="p">.</span><span class="k">execute</span><span class="p">(</span><span class="ss">&quot;SELECT * FROM {}&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="k">table_name</span><span class="p">))</span>
+
+<span class="n">while</span> <span class="k">True</span><span class="p">:</span>
+    <span class="k">row</span> <span class="o">=</span> <span class="k">cursor</span><span class="p">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="k">if</span> <span class="k">not</span> <span class="k">row</span><span class="p">:</span>
+        <span class="n">break</span>
+
+    <span class="n">row_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">getattr</span><span class="p">(</span><span class="k">row</span><span class="p">,</span> <span class="k">column</span><span class="p">)</span> <span class="k">for</span> <span class="k">column</span> <span class="k">in</span> <span class="n">columns</span><span class="p">]</span>
+
+    <span class="o">#</span> <span class="k">In</span> <span class="n">this</span> <span class="n">example</span> <span class="n">we</span> <span class="k">are</span> <span class="n">writing</span> <span class="n">the</span> <span class="k">rows</span> <span class="k">data</span> <span class="k">to</span> <span class="n">a</span> <span class="n">csv</span> <span class="n">file</span><span class="p">.</span>
+    <span class="n">csv_file</span><span class="p">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Dealing with larger SQL datasets and limited memory</a><ul>
+<li><a class="reference internal" href="#mysql">MySQL</a></li>
+<li><a class="reference internal" href="#sql-server">SQL Server</a></li>
+<li><a class="reference internal" href="#sql-server-updated-2016-09-10">SQL Server Updated 2016-09-10</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="python3-win32com-constants.html"
+                        title="previous chapter">Python 3 accessing win32com.client.constants</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ssh-website-tunneling.html"
+                        title="next chapter">Protect websites with the power of SSH</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sql-dataset-memory.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ssh-website-tunneling.html" title="Protect websites with the power of SSH"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="python3-win32com-constants.html" title="Python 3 accessing win32com.client.constants"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">IARP 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Dealing with larger SQL datasets and limited memory</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, IARP.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>

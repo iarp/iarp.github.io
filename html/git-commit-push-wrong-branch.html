@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Git, committed and pushed to the incorrect branch &#8212; IARP 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ELI5: Computer Fragmentation" href="eli5-computer-fragmentation.html" />
+    <link rel="prev" title="Protect websites with the power of SSH" href="ssh-website-tunneling.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="eli5-computer-fragmentation.html" title="ELI5: Computer Fragmentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ssh-website-tunneling.html" title="Protect websites with the power of SSH"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">IARP 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Git, committed and pushed to the incorrect branch</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="git-committed-and-pushed-to-the-incorrect-branch">
+<h1>Git, committed and pushed to the incorrect branch<a class="headerlink" href="#git-committed-and-pushed-to-the-incorrect-branch" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Originally Written: 2013-09-26</p>
+</div></blockquote>
+<p>I made a mistake today. I made changes while in the <code class="docutils literal notranslate"><span class="pre">[master]</span></code> branch instead of <code class="docutils literal notranslate"><span class="pre">[develop]</span></code>, committed those
+changes and then pushed to the repo.</p>
+<p>A relatively easy fix</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ensure you&#39;re in the branch that you commited to by accident.</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+
+<span class="c1"># Reset the branch back one commit.</span>
+<span class="n">git</span> <span class="n">reset</span> <span class="o">--</span><span class="n">soft</span> <span class="n">HEAD</span><span class="o">^</span>
+
+<span class="c1"># Stash the changes</span>
+<span class="n">git</span> <span class="n">stash</span>
+
+<span class="c1"># Checkout the branch it should be in</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">develop</span>
+
+<span class="c1"># Apply the stash</span>
+<span class="n">git</span> <span class="n">stash</span> <span class="n">apply</span>
+
+<span class="c1"># Commit the changes just as you did before, you will need to rewrite the message.</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">...</span>
+
+<span class="c1"># Push the changes to our develop branch</span>
+<span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">develop</span>
+
+<span class="c1"># Checkout the original branch</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+
+<span class="c1"># Force push the commit deletion to the original branch.</span>
+<span class="n">git</span> <span class="n">push</span> <span class="o">--</span><span class="n">force</span> <span class="n">origin</span> <span class="n">master</span>
+</pre></div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ssh-website-tunneling.html"
+                        title="previous chapter">Protect websites with the power of SSH</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="eli5-computer-fragmentation.html"
+                        title="next chapter">ELI5: Computer Fragmentation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/git-commit-push-wrong-branch.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="eli5-computer-fragmentation.html" title="ELI5: Computer Fragmentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ssh-website-tunneling.html" title="Protect websites with the power of SSH"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">IARP 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Git, committed and pushed to the incorrect branch</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, IARP.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>
