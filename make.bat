@@ -1,5 +1,8 @@
 @ECHO OFF
 
+del /S /Q html\
+del /S /Q docs\*
+
 pushd %~dp0
 
 REM Command file for Sphinx documentation
@@ -34,4 +37,4 @@ goto end
 :end
 popd
 
-xcopy html docs /s /e
+xcopy html docs /s /e /q /y
