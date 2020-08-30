@@ -33,3 +33,5 @@ goto end
 
 :end
 popd
+
+xcopy html docs /s /e
