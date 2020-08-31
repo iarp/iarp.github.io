@@ -7,15 +7,15 @@
 * 2016
     * [pfSense, computers cannot resolve each other hostnames](pfsense-computer-hostname-resolve.html)
     * [Allow specific username access to mount and umount on linux without sudo](linux-user-mount-without-sudo.html)
-    * [Python 3 accessing Outlook via API/COM](python3-outlook-api.html)
-    * [Python 3 accessing win32com.client.constants](python3-win32com-constants.html)
+    * [Python 3 accessing Outlook via API/COM](python/python3-outlook-api.html)
+    * [Python 3 accessing win32com.client.constants](python/python3-win32com-constants.html)
 * 2015
     * [Dealing with larger SQL datasets and limited memory](sql-dataset-memory.html)
     * [Protect websites with the power of SSH](ssh-website-tunneling.html)
 * 2013
     * [Git, committed and pushed to the incorrect branch](git-commit-push-wrong-branch.html)
     * [ELI5: Computer Fragmentation](eli5-computer-fragmentation.html)
-    * [Python 2.7, Py2Exe and MSVCP90.dll](python-27-py2exe-msvcp90-dll.html)
+    * [Python 2.7, Py2Exe and MSVCP90.dll](python/python-27-py2exe-msvcp90-dll.html)
 * 2012
     * [Hyper-V and the Intel 82579](hyper-v-intel-82579.html)
     * [ESXi 5 and the Intel 82579](esxi-5-and-intel-82579.html)
