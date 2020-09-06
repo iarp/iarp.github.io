@@ -19,3 +19,25 @@
 * 2012
     * [Hyper-V and the Intel 82579](hyper-v-intel-82579.html)
     * [ESXi 5 and the Intel 82579](esxi-5-and-intel-82579.html)
+
+
+## Random Notes
+
+* [unRAID Commands](unraid.html)
+* [Django - Hosting on Windows](django-windows-host.html)
+
+### Linux
+
+* [Find Commands](linux/find.html)
+* [File based commands](linux/files.html)
+* [md5 compare mirrored directories](linux/md5-compare.html)
+* [megacmd continuous retry until complete](linux/megacmd.html)
+
+## Python
+
+* [Pandas replace all NaN and NaT values with None](python/pandas-replace-nan-nat-with-none.html)
+
+## Veeam
+
+* [Veeam Endpoint Database Reset](veeam/endpoint-database-reset.html)
+* [Veeam restore on VMWare workstation](veeam/restore-to-vmware-workstation.html)

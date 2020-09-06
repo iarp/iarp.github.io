@@ -1,2 +1,5 @@
 theme: jekyll-theme-dinky
 title: IARP
+exclude:
+    - _site
+    - venv
