@@ -3,7 +3,7 @@
 Build the md5 checklist file
 
 ```bash
-find -type f -exec md5sum "{}" > /boot/md5_clonezilla.chk
+find . -type f -exec md5sum "{}" \; > /boot/md5_clonezilla.chk
 ```
 
 Compare the checklist file
