@@ -66,3 +66,7 @@ find -depth -type d -empty -exec rmdir {} \;
 ```bash
 find DIR_NAME -type f -print | wc -l
 ```
+
+# Notes
+
+Use `-iname` for case-insensitive searching.
