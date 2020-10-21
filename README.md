@@ -25,6 +25,7 @@
 
 * [unRAID Commands](unraid.html)
 * [Django - Hosting on Windows](django-windows-host.html)
+* [Nginx Notes](nginx-notes.html)
 
 ### Linux
 
