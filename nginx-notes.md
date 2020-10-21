@@ -17,4 +17,5 @@ location /protected_files {
 location /protected_files {
   internal;
   root /var/www;
-}```
+}
+```
