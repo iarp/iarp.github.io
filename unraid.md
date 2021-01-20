@@ -33,3 +33,49 @@ iotop -oa
 bwm-ng -T avg -R 1 -i disk -c 1 -I sda,sdb,sdc,sdd,sde,sdf,sdg -H
 # Add "-o html" for html output
 ```
+
+# Find open files by drive
+
+```bash
+lsof /dev/md*
+```
+
+# Mount and sync another system
+
+```bash
+mkdir /mnt/other_documents
+mount -t cifs -o user=username,password=password,iocharset=utf8 //192.168.0.2/documents /mnt/other_documents
+```
+
+- Add `vers=1.0` to `-o` if connecting to an older unraid.
+- `iocharset=utf8` is how file and directory names are handled.
+
+```bash
+rsync -avPX /mnt/user/documents/ /mnt/other_documents/
+```
+
+Do not forget ending slashes on directories to transfer the contents of source into the destination.
+
+Leaving off trailing slashes causes the source folder itself to sync into the destination path.
+
+```
+a - equals rlptgoD below:
+
+r - recursive             recurse into directories
+l - links                 copy symlinks as symlinks
+p - perms                 preserve permissions
+t - times                 preserve modification times
+g - group                 preserve group
+o - owner                 preserve owner (super-user only)
+D -                       same as --devices --specials
+    --devices               preserve device files (super-user only)
+    --specials              preserve special files
+
+v - verbose               increase verbosity
+
+P -                         same as --partial --progress
+    --progress              show progress during transfer
+    --partial               keep partially transferred files
+    
+X - xattrs                preserve extended attributes
+```
