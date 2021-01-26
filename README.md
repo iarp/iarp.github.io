@@ -38,6 +38,7 @@
 ## Python
 
 * [Pandas replace all NaN and NaT values with None](python/pandas-replace-nan-nat-with-none.html)
+* [eyed3](python/python3-eyed3.html)
 
 ## Veeam
 
