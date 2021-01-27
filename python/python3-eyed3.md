@@ -17,7 +17,7 @@ In my case and as demonstrated below, I clear all existing custom tags and rewri
 import eyed3
 from eyed3.id3.frames import UserTextFrame
 
-af = eyed3.load(show.file.path)
+af = eyed3.load(file_path)
 
 # Clear existing tags.
 if b'TXXX' in af.tag.frame_set:
@@ -37,3 +37,25 @@ af.tag.frame_set[b'TXXX'].extend([
 
 ```
 
+Passing Date object to recording_date returns error
+---------------------------------------------------
+
+https://github.com/nicfit/eyeD3/issues/517
+
+```python
+import eyed3
+from eyed3.core import Date
+
+af = eyed3.load(file_path)
+
+# This will return an error because the formatting eyed3 uses interprets 0405 as a year format and not month/day.
+af.tag.recording_date = Date(2021, 4, 5)
+
+# eyed3/id3/tag.py line 558 within _setRecordingDate as of 2021-01-27 shows:
+
+self._setDate(b"TDAT", date_str)
+
+# Change it to 
+self._setDate(b"TDAT", date)
+
+```
