@@ -25,7 +25,7 @@ if b'TXXX' in af.tag.frame_set:
 
 # Ensure TXXX exists in the frame_set. You must set at least one tag to initialize it.
 if b'TXXX' not in af.tag.frame_set:
-    af.tag.frame_set[b'TXXX'] = UserTextFrame(description="MY_CUSTOM_TAG", text="My Custom Data!"),
+    af.tag.frame_set[b'TXXX'] = UserTextFrame(b'TXXX', description="MY_CUSTOM_TAG", text="My Custom Data!")
 
 # After you've set at least one custom tag (or at least one pre-existed), 
 # you can then treat it like a normal list
