@@ -27,6 +27,7 @@
 * [Django - Hosting on Windows](django-windows-host.html)
 * [Nginx Notes](nginx-notes.html)
 * [ffmpeg Commands](ffmpeg.html)
+* [LogMeIn Hamachi](hamachi.html)
 
 ### Linux
 
