@@ -28,6 +28,7 @@
 * [Nginx Notes](nginx-notes.html)
 * [ffmpeg Commands](ffmpeg.html)
 * [LogMeIn Hamachi](hamachi.html)
+* [WordPress](wordpress.html)
 
 ### Linux
 
