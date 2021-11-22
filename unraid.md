@@ -78,4 +78,7 @@ P -                         same as --partial --progress
     --partial               keep partially transferred files
     
 X - xattrs                preserve extended attributes
+W - whole-files         copy files whole (w/o delta-xfer algorithm)
+S - sparse              handle sparse files efficiently
+                          (VM hdd's and such)
 ```
