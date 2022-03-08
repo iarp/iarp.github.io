@@ -72,3 +72,14 @@ select_field.select_by_value('Admin')
 # To select by the visible text of the option element
 select_field.select_by_visible_text('Administrator')
 ```
+
+### Set hidden input value
+
+```python
+elem = hcr.find_element_by_id(f'position_id')
+browser.execute_script('''
+    var elem = arguments[0];
+    var value = arguments[1];
+    elem.value = value;
+''', elem, 'Player')
+```
