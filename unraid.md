@@ -82,3 +82,45 @@ W - whole-files         copy files whole (w/o delta-xfer algorithm)
 S - sparse              handle sparse files efficiently
                           (VM hdd's and such)
 ```
+
+# Wireguard config restricts user access to specific internal docker based on IP and Port, while blocking access to unraid webui.
+
+I use a User Script entry with the schedule set to "At First Array Start Only" 
+as you do not want to run this more than once per boot.
+
+```
+WIREGUARD_INTERFACE=wg1
+WIREGUARD_LAN=10.253.2.0/24
+MASQUERADE_INTERFACE=eth0
+
+iptables -t nat -I POSTROUTING -o $MASQUERADE_INTERFACE -j MASQUERADE -s $WIREGUARD_LAN
+
+
+iptables -N WIREGUARD_INPUT
+iptables -N WIREGUARD_DROP_WG0_INPUT
+iptables -A INPUT -j WIREGUARD_INPUT
+
+iptables -A WIREGUARD_INPUT -i $WIREGUARD_INTERFACE -j WIREGUARD_DROP_WG0_INPUT
+iptables -A WIREGUARD_DROP_WG0_INPUT -s 10.253.2.0/24 -j DROP
+iptables -A WIREGUARD_DROP_WG0_INPUT -j RETURN 
+
+
+# Add a WIREGUARD_wg0 chain to the FORWARD chain
+CHAIN_NAME="WIREGUARD_$WIREGUARD_INTERFACE"
+iptables -N $CHAIN_NAME
+iptables -I FORWARD -i $WIREGUARD_INTERFACE -j $CHAIN_NAME
+
+# Accept related or established traffic
+iptables -A $CHAIN_NAME -o $WIREGUARD_INTERFACE -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+# These are the docker IP's and ports I want to grant these tunnel wg1 peers access to.
+iptables -A $CHAIN_NAME -i $WIREGUARD_INTERFACE -d 172.17.0.10 -p tcp -m tcp --dport 9117 -j ACCEPT
+iptables -A $CHAIN_NAME -i $WIREGUARD_INTERFACE -d 172.17.0.20 -p tcp -m tcp --dport 1433 -j ACCEPT
+iptables -A $CHAIN_NAME -i $WIREGUARD_INTERFACE -d 172.17.0.4 -p tcp -m tcp --dport 5432 -j ACCEPT
+
+# Drop everything else coming through the Wireguard interface
+iptables -A $CHAIN_NAME -i $WIREGUARD_INTERFACE -j DROP
+
+# Return to FORWARD chain
+iptables -A $CHAIN_NAME -j RETURN
+```
