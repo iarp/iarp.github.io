@@ -124,3 +124,23 @@ iptables -A $CHAIN_NAME -i $WIREGUARD_INTERFACE -j DROP
 # Return to FORWARD chain
 iptables -A $CHAIN_NAME -j RETURN
 ```
+
+## Enable docker stop sequence bottom up
+
+Create and paste the following into
+
+`/usr/local/emhttp/plugins/iarp.docker/event/stopping_docker`
+
+```bash
+#!/bin/bash
+logger "test from stopping_docker in iarp.test"
+
+sed '1!G;h;$!d' "/boot/config/plugins/dockerMan/userprefs.cfg" | while read line || [[ -n $line ]];
+do
+    # do something with $line here
+    tmp=${line#*\"}  # Remove everything up to and including first =
+    container_name=${tmp::-1}
+    echo "Stopping $container_name"
+    docker stop $container_name
+done
+```
