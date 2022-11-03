@@ -23,12 +23,13 @@
 
 ## Random Notes
 
-* [unRAID Commands](unraid.html)
 * [Django - Hosting on Windows](django-windows-host.html)
 * [Django - Server Configs](django-server-config.html)
-* [Nginx Notes](nginx-notes.html)
 * [ffmpeg Commands](ffmpeg.html)
 * [LogMeIn Hamachi](hamachi.html)
+* [Nginx Notes](nginx-notes.html)
+* [PostgreSQL](postgres.html)
+* [unRAID Commands](unraid.html)
 * [WordPress](wordpress.html)
 
 ### Linux
