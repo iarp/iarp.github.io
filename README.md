@@ -1,5 +1,7 @@
 # IARP
 
+* 2022
+    * [Python Selenium Notes](python/python3-selenium-notes.html) 
 * 2020
     * [Android 9, Oxygen OS 9 WiFi Wireless Disables When Screen Off](android9-oxygenos9-screen-off-wifi-off.html)
 * 2017
