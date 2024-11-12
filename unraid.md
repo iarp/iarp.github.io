@@ -144,3 +144,14 @@ do
     docker stop $container_name
 done
 ```
+
+# inotifywait to watch what files are being accessed
+
+```bash
+inotifywait -e create,modify,attrib,moved_from,moved_to --timefmt %c --format '%T %_e %w %f' -mr /var/lib/docker
+inotifywait -mr -e close_write --format '%w%f' /mnt/disk1 /mnt/disk2
+inotifywait -rme access,modify,close_write,open --timefmt '%F %T' --format '%T %w%f %e' /boot/config/plugins/dockerMan/
+inotifywait -e access,create,modify,attrib,moved_from,moved_to --timefmt %c --format '%T %_e %w %f' -mr /boot
+
+inotifywait -e create,modify,attrib,moved_from,moved_to -mr /mnt/cache/
+```
